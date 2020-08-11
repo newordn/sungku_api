@@ -1,0 +1,29 @@
+const typeDefs = `
+type Query{
+    users:[User!]!
+    user(user:ID!): User!
+}
+
+type Mutation{
+   userSetPhone(phone:String!): AuthPayload!
+   userSetPassword(password:String!,user:ID!): AuthPayload!
+   userSetCode(code:String!,user:ID!):AuthPayload!
+   userSetName(name:String!,user:ID!): AuthPayload!
+}
+type AuthPayload{
+    token: String!
+    user: User!
+}
+
+type User{
+   id: ID!
+   name:String
+   phone: String!
+   password: String!
+   code: String!
+}
+}
+`
+module.exports ={
+    typeDefs
+}
