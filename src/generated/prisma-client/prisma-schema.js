@@ -54,8 +54,8 @@ type User {
   id: ID!
   name: String
   phone: String!
-  password: String!
-  code: String!
+  password: String
+  code: String
 }
 
 type UserConnection {
@@ -68,8 +68,8 @@ input UserCreateInput {
   id: ID
   name: String
   phone: String!
-  password: String!
-  code: String!
+  password: String
+  code: String
 }
 
 type UserEdge {
@@ -94,8 +94,8 @@ type UserPreviousValues {
   id: ID!
   name: String
   phone: String!
-  password: String!
-  code: String!
+  password: String
+  code: String
 }
 
 type UserSubscriptionPayload {

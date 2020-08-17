@@ -6,9 +6,9 @@ type Query{
 
 type Mutation{
    userSetPhone(phone:String!): AuthPayload!
-   userSetPassword(password:String!,user:ID!): AuthPayload!
-   userSetCode(code:String!,user:ID!):AuthPayload!
-   userSetName(name:String!,user:ID!): AuthPayload!
+   userSetPassword(password:String!,user:ID!): User!
+   userSetCode(code:String!,user:ID!):User!
+   userSetName(name:String!,user:ID!): User!
 }
 type AuthPayload{
     token: String!
@@ -19,10 +19,10 @@ type User{
    id: ID!
    name:String
    phone: String!
-   password: String!
-   code: String!
+   password: String
+   code: String
 }
-}
+
 `
 module.exports ={
     typeDefs
