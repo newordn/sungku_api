@@ -16,6 +16,7 @@ export type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
 export type Maybe<T> = T | undefined | null;
 
 export interface Exists {
+  account: (where?: AccountWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
 }
 
@@ -38,6 +39,25 @@ export interface Prisma {
    * Queries
    */
 
+  account: (where: AccountWhereUniqueInput) => AccountNullablePromise;
+  accounts: (args?: {
+    where?: AccountWhereInput;
+    orderBy?: AccountOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<Account>;
+  accountsConnection: (args?: {
+    where?: AccountWhereInput;
+    orderBy?: AccountOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => AccountConnectionPromise;
   user: (where: UserWhereUniqueInput) => UserNullablePromise;
   users: (args?: {
     where?: UserWhereInput;
@@ -63,6 +83,22 @@ export interface Prisma {
    * Mutations
    */
 
+  createAccount: (data: AccountCreateInput) => AccountPromise;
+  updateAccount: (args: {
+    data: AccountUpdateInput;
+    where: AccountWhereUniqueInput;
+  }) => AccountPromise;
+  updateManyAccounts: (args: {
+    data: AccountUpdateManyMutationInput;
+    where?: AccountWhereInput;
+  }) => BatchPayloadPromise;
+  upsertAccount: (args: {
+    where: AccountWhereUniqueInput;
+    create: AccountCreateInput;
+    update: AccountUpdateInput;
+  }) => AccountPromise;
+  deleteAccount: (where: AccountWhereUniqueInput) => AccountPromise;
+  deleteManyAccounts: (where?: AccountWhereInput) => BatchPayloadPromise;
   createUser: (data: UserCreateInput) => UserPromise;
   updateUser: (args: {
     data: UserUpdateInput;
@@ -88,6 +124,9 @@ export interface Prisma {
 }
 
 export interface Subscription {
+  account: (
+    where?: AccountSubscriptionWhereInput
+  ) => AccountSubscriptionPayloadSubscription;
   user: (
     where?: UserSubscriptionWhereInput
   ) => UserSubscriptionPayloadSubscription;
@@ -100,6 +139,14 @@ export interface ClientConstructor<T> {
 /**
  * Types
  */
+
+export type AccountOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "balance_ASC"
+  | "balance_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC";
 
 export type UserOrderByInput =
   | "id_ASC"
@@ -115,10 +162,46 @@ export type UserOrderByInput =
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
-export type UserWhereUniqueInput = AtLeastOne<{
+export type AccountWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
-  phone?: Maybe<String>;
 }>;
+
+export interface AccountWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  balance?: Maybe<Float>;
+  balance_not?: Maybe<Float>;
+  balance_in?: Maybe<Float[] | Float>;
+  balance_not_in?: Maybe<Float[] | Float>;
+  balance_lt?: Maybe<Float>;
+  balance_lte?: Maybe<Float>;
+  balance_gt?: Maybe<Float>;
+  balance_gte?: Maybe<Float>;
+  owner?: Maybe<UserWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<AccountWhereInput[] | AccountWhereInput>;
+  OR?: Maybe<AccountWhereInput[] | AccountWhereInput>;
+  NOT?: Maybe<AccountWhereInput[] | AccountWhereInput>;
+}
 
 export interface UserWhereInput {
   id?: Maybe<ID_Input>;
@@ -191,9 +274,62 @@ export interface UserWhereInput {
   code_not_starts_with?: Maybe<String>;
   code_ends_with?: Maybe<String>;
   code_not_ends_with?: Maybe<String>;
+  account?: Maybe<AccountWhereInput>;
   AND?: Maybe<UserWhereInput[] | UserWhereInput>;
   OR?: Maybe<UserWhereInput[] | UserWhereInput>;
   NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
+}
+
+export type UserWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  phone?: Maybe<String>;
+}>;
+
+export interface AccountCreateInput {
+  id?: Maybe<ID_Input>;
+  balance: Float;
+  owner: UserCreateOneWithoutAccountInput;
+}
+
+export interface UserCreateOneWithoutAccountInput {
+  create?: Maybe<UserCreateWithoutAccountInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserCreateWithoutAccountInput {
+  id?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  phone: String;
+  password?: Maybe<String>;
+  code?: Maybe<String>;
+}
+
+export interface AccountUpdateInput {
+  balance?: Maybe<Float>;
+  owner?: Maybe<UserUpdateOneRequiredWithoutAccountInput>;
+}
+
+export interface UserUpdateOneRequiredWithoutAccountInput {
+  create?: Maybe<UserCreateWithoutAccountInput>;
+  update?: Maybe<UserUpdateWithoutAccountDataInput>;
+  upsert?: Maybe<UserUpsertWithoutAccountInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface UserUpdateWithoutAccountDataInput {
+  name?: Maybe<String>;
+  phone?: Maybe<String>;
+  password?: Maybe<String>;
+  code?: Maybe<String>;
+}
+
+export interface UserUpsertWithoutAccountInput {
+  update: UserUpdateWithoutAccountDataInput;
+  create: UserCreateWithoutAccountInput;
+}
+
+export interface AccountUpdateManyMutationInput {
+  balance?: Maybe<Float>;
 }
 
 export interface UserCreateInput {
@@ -202,6 +338,17 @@ export interface UserCreateInput {
   phone: String;
   password?: Maybe<String>;
   code?: Maybe<String>;
+  account?: Maybe<AccountCreateOneWithoutOwnerInput>;
+}
+
+export interface AccountCreateOneWithoutOwnerInput {
+  create?: Maybe<AccountCreateWithoutOwnerInput>;
+  connect?: Maybe<AccountWhereUniqueInput>;
+}
+
+export interface AccountCreateWithoutOwnerInput {
+  id?: Maybe<ID_Input>;
+  balance: Float;
 }
 
 export interface UserUpdateInput {
@@ -209,6 +356,25 @@ export interface UserUpdateInput {
   phone?: Maybe<String>;
   password?: Maybe<String>;
   code?: Maybe<String>;
+  account?: Maybe<AccountUpdateOneWithoutOwnerInput>;
+}
+
+export interface AccountUpdateOneWithoutOwnerInput {
+  create?: Maybe<AccountCreateWithoutOwnerInput>;
+  update?: Maybe<AccountUpdateWithoutOwnerDataInput>;
+  upsert?: Maybe<AccountUpsertWithoutOwnerInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<AccountWhereUniqueInput>;
+}
+
+export interface AccountUpdateWithoutOwnerDataInput {
+  balance?: Maybe<Float>;
+}
+
+export interface AccountUpsertWithoutOwnerInput {
+  update: AccountUpdateWithoutOwnerDataInput;
+  create: AccountCreateWithoutOwnerInput;
 }
 
 export interface UserUpdateManyMutationInput {
@@ -216,6 +382,17 @@ export interface UserUpdateManyMutationInput {
   phone?: Maybe<String>;
   password?: Maybe<String>;
   code?: Maybe<String>;
+}
+
+export interface AccountSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<AccountWhereInput>;
+  AND?: Maybe<AccountSubscriptionWhereInput[] | AccountSubscriptionWhereInput>;
+  OR?: Maybe<AccountSubscriptionWhereInput[] | AccountSubscriptionWhereInput>;
+  NOT?: Maybe<AccountSubscriptionWhereInput[] | AccountSubscriptionWhereInput>;
 }
 
 export interface UserSubscriptionWhereInput {
@@ -233,6 +410,37 @@ export interface NodeNode {
   id: ID_Output;
 }
 
+export interface Account {
+  id: ID_Output;
+  balance: Float;
+  createdAt: DateTimeOutput;
+}
+
+export interface AccountPromise extends Promise<Account>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  balance: () => Promise<Float>;
+  owner: <T = UserPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+}
+
+export interface AccountSubscription
+  extends Promise<AsyncIterator<Account>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  balance: () => Promise<AsyncIterator<Float>>;
+  owner: <T = UserSubscription>() => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface AccountNullablePromise
+  extends Promise<Account | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  balance: () => Promise<Float>;
+  owner: <T = UserPromise>() => T;
+  createdAt: () => Promise<DateTimeOutput>;
+}
+
 export interface User {
   id: ID_Output;
   name?: String;
@@ -247,6 +455,7 @@ export interface UserPromise extends Promise<User>, Fragmentable {
   phone: () => Promise<String>;
   password: () => Promise<String>;
   code: () => Promise<String>;
+  account: <T = AccountPromise>() => T;
 }
 
 export interface UserSubscription
@@ -257,6 +466,7 @@ export interface UserSubscription
   phone: () => Promise<AsyncIterator<String>>;
   password: () => Promise<AsyncIterator<String>>;
   code: () => Promise<AsyncIterator<String>>;
+  account: <T = AccountSubscription>() => T;
 }
 
 export interface UserNullablePromise
@@ -267,27 +477,28 @@ export interface UserNullablePromise
   phone: () => Promise<String>;
   password: () => Promise<String>;
   code: () => Promise<String>;
+  account: <T = AccountPromise>() => T;
 }
 
-export interface UserConnection {
+export interface AccountConnection {
   pageInfo: PageInfo;
-  edges: UserEdge[];
+  edges: AccountEdge[];
 }
 
-export interface UserConnectionPromise
-  extends Promise<UserConnection>,
+export interface AccountConnectionPromise
+  extends Promise<AccountConnection>,
     Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<UserEdge>>() => T;
-  aggregate: <T = AggregateUserPromise>() => T;
+  edges: <T = FragmentableArray<AccountEdge>>() => T;
+  aggregate: <T = AggregateAccountPromise>() => T;
 }
 
-export interface UserConnectionSubscription
-  extends Promise<AsyncIterator<UserConnection>>,
+export interface AccountConnectionSubscription
+  extends Promise<AsyncIterator<AccountConnection>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateUserSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<AccountEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateAccountSubscription>() => T;
 }
 
 export interface PageInfo {
@@ -311,6 +522,60 @@ export interface PageInfoSubscription
   hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
   startCursor: () => Promise<AsyncIterator<String>>;
   endCursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AccountEdge {
+  node: Account;
+  cursor: String;
+}
+
+export interface AccountEdgePromise extends Promise<AccountEdge>, Fragmentable {
+  node: <T = AccountPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface AccountEdgeSubscription
+  extends Promise<AsyncIterator<AccountEdge>>,
+    Fragmentable {
+  node: <T = AccountSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateAccount {
+  count: Int;
+}
+
+export interface AggregateAccountPromise
+  extends Promise<AggregateAccount>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateAccountSubscription
+  extends Promise<AsyncIterator<AggregateAccount>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface UserConnection {
+  pageInfo: PageInfo;
+  edges: UserEdge[];
+}
+
+export interface UserConnectionPromise
+  extends Promise<UserConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<UserEdge>>() => T;
+  aggregate: <T = AggregateUserPromise>() => T;
+}
+
+export interface UserConnectionSubscription
+  extends Promise<AsyncIterator<UserConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateUserSubscription>() => T;
 }
 
 export interface UserEdge {
@@ -360,6 +625,53 @@ export interface BatchPayloadSubscription
   extends Promise<AsyncIterator<BatchPayload>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Long>>;
+}
+
+export interface AccountSubscriptionPayload {
+  mutation: MutationType;
+  node: Account;
+  updatedFields: String[];
+  previousValues: AccountPreviousValues;
+}
+
+export interface AccountSubscriptionPayloadPromise
+  extends Promise<AccountSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = AccountPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = AccountPreviousValuesPromise>() => T;
+}
+
+export interface AccountSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<AccountSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = AccountSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = AccountPreviousValuesSubscription>() => T;
+}
+
+export interface AccountPreviousValues {
+  id: ID_Output;
+  balance: Float;
+  createdAt: DateTimeOutput;
+}
+
+export interface AccountPreviousValuesPromise
+  extends Promise<AccountPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  balance: () => Promise<Float>;
+  createdAt: () => Promise<DateTimeOutput>;
+}
+
+export interface AccountPreviousValuesSubscription
+  extends Promise<AsyncIterator<AccountPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  balance: () => Promise<AsyncIterator<Float>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
 export interface UserSubscriptionPayload {
@@ -422,9 +734,24 @@ export type ID_Input = string | number;
 export type ID_Output = string;
 
 /*
+The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).
+*/
+export type Float = number;
+
+/*
 The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
 */
 export type String = string;
+
+/*
+DateTime scalar input type, allowing Date
+*/
+export type DateTimeInput = Date | string;
+
+/*
+DateTime scalar output type, which is always a string
+*/
+export type DateTimeOutput = string;
 
 /*
 The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
@@ -445,6 +772,10 @@ export type Long = string;
 export const models: Model[] = [
   {
     name: "User",
+    embedded: false
+  },
+  {
+    name: "Account",
     embedded: false
   }
 ];

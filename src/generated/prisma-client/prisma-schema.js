@@ -3,7 +3,146 @@ module.exports = {
   // Please don't change this file manually but run `prisma generate` to update it.
   // For more information, please read the docs: https://www.prisma.io/docs/prisma-client/
 
-/* GraphQL */ `type AggregateUser {
+/* GraphQL */ `type Account {
+  id: ID!
+  balance: Float!
+  owner: User!
+  createdAt: DateTime!
+}
+
+type AccountConnection {
+  pageInfo: PageInfo!
+  edges: [AccountEdge]!
+  aggregate: AggregateAccount!
+}
+
+input AccountCreateInput {
+  id: ID
+  balance: Float!
+  owner: UserCreateOneWithoutAccountInput!
+}
+
+input AccountCreateOneWithoutOwnerInput {
+  create: AccountCreateWithoutOwnerInput
+  connect: AccountWhereUniqueInput
+}
+
+input AccountCreateWithoutOwnerInput {
+  id: ID
+  balance: Float!
+}
+
+type AccountEdge {
+  node: Account!
+  cursor: String!
+}
+
+enum AccountOrderByInput {
+  id_ASC
+  id_DESC
+  balance_ASC
+  balance_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type AccountPreviousValues {
+  id: ID!
+  balance: Float!
+  createdAt: DateTime!
+}
+
+type AccountSubscriptionPayload {
+  mutation: MutationType!
+  node: Account
+  updatedFields: [String!]
+  previousValues: AccountPreviousValues
+}
+
+input AccountSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: AccountWhereInput
+  AND: [AccountSubscriptionWhereInput!]
+  OR: [AccountSubscriptionWhereInput!]
+  NOT: [AccountSubscriptionWhereInput!]
+}
+
+input AccountUpdateInput {
+  balance: Float
+  owner: UserUpdateOneRequiredWithoutAccountInput
+}
+
+input AccountUpdateManyMutationInput {
+  balance: Float
+}
+
+input AccountUpdateOneWithoutOwnerInput {
+  create: AccountCreateWithoutOwnerInput
+  update: AccountUpdateWithoutOwnerDataInput
+  upsert: AccountUpsertWithoutOwnerInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: AccountWhereUniqueInput
+}
+
+input AccountUpdateWithoutOwnerDataInput {
+  balance: Float
+}
+
+input AccountUpsertWithoutOwnerInput {
+  update: AccountUpdateWithoutOwnerDataInput!
+  create: AccountCreateWithoutOwnerInput!
+}
+
+input AccountWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  balance: Float
+  balance_not: Float
+  balance_in: [Float!]
+  balance_not_in: [Float!]
+  balance_lt: Float
+  balance_lte: Float
+  balance_gt: Float
+  balance_gte: Float
+  owner: UserWhereInput
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  AND: [AccountWhereInput!]
+  OR: [AccountWhereInput!]
+  NOT: [AccountWhereInput!]
+}
+
+input AccountWhereUniqueInput {
+  id: ID
+}
+
+type AggregateAccount {
+  count: Int!
+}
+
+type AggregateUser {
   count: Int!
 }
 
@@ -11,9 +150,17 @@ type BatchPayload {
   count: Long!
 }
 
+scalar DateTime
+
 scalar Long
 
 type Mutation {
+  createAccount(data: AccountCreateInput!): Account!
+  updateAccount(data: AccountUpdateInput!, where: AccountWhereUniqueInput!): Account
+  updateManyAccounts(data: AccountUpdateManyMutationInput!, where: AccountWhereInput): BatchPayload!
+  upsertAccount(where: AccountWhereUniqueInput!, create: AccountCreateInput!, update: AccountUpdateInput!): Account!
+  deleteAccount(where: AccountWhereUniqueInput!): Account
+  deleteManyAccounts(where: AccountWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
@@ -40,6 +187,9 @@ type PageInfo {
 }
 
 type Query {
+  account(where: AccountWhereUniqueInput!): Account
+  accounts(where: AccountWhereInput, orderBy: AccountOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Account]!
+  accountsConnection(where: AccountWhereInput, orderBy: AccountOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AccountConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
@@ -47,6 +197,7 @@ type Query {
 }
 
 type Subscription {
+  account(where: AccountSubscriptionWhereInput): AccountSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
@@ -56,6 +207,7 @@ type User {
   phone: String!
   password: String
   code: String
+  account: Account
 }
 
 type UserConnection {
@@ -65,6 +217,20 @@ type UserConnection {
 }
 
 input UserCreateInput {
+  id: ID
+  name: String
+  phone: String!
+  password: String
+  code: String
+  account: AccountCreateOneWithoutOwnerInput
+}
+
+input UserCreateOneWithoutAccountInput {
+  create: UserCreateWithoutAccountInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutAccountInput {
   id: ID
   name: String
   phone: String!
@@ -121,6 +287,7 @@ input UserUpdateInput {
   phone: String
   password: String
   code: String
+  account: AccountUpdateOneWithoutOwnerInput
 }
 
 input UserUpdateManyMutationInput {
@@ -128,6 +295,25 @@ input UserUpdateManyMutationInput {
   phone: String
   password: String
   code: String
+}
+
+input UserUpdateOneRequiredWithoutAccountInput {
+  create: UserCreateWithoutAccountInput
+  update: UserUpdateWithoutAccountDataInput
+  upsert: UserUpsertWithoutAccountInput
+  connect: UserWhereUniqueInput
+}
+
+input UserUpdateWithoutAccountDataInput {
+  name: String
+  phone: String
+  password: String
+  code: String
+}
+
+input UserUpsertWithoutAccountInput {
+  update: UserUpdateWithoutAccountDataInput!
+  create: UserCreateWithoutAccountInput!
 }
 
 input UserWhereInput {
@@ -201,6 +387,7 @@ input UserWhereInput {
   code_not_starts_with: String
   code_ends_with: String
   code_not_ends_with: String
+  account: AccountWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

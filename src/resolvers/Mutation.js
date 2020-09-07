@@ -15,7 +15,11 @@ async function userSetPhone(parent,args,context,info)
     }
     // Neword: sinon on le creer
     else{
-      user=  await  context.prisma.createUser({phone:args.phone})
+      user=  await  context.prisma.createUser({phone:args.phone, account:{
+          create:{
+              balance:0.0
+          }
+      }})
       const token = jwt.sign({userId: user.id},APP_SECRET)
         return {
             user,
