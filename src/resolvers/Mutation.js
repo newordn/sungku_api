@@ -83,6 +83,12 @@ async function transfert(parent, args, context, info) {
   const receiverAccount = await context.prisma
     .user({ phone: receiverPhone })
     .account();
+  const initiatorAccountBalance = initiatorAccount.balance
+    ? initiatorAccount.balance
+    : 0;
+  const receiverAccountBalance = receiverAccount.balance
+    ? receiverAccount.balance
+    : 0;
   switch (type) {
     case DEPOT:
       if (initiatorAccount.type === MERCHANT) {
@@ -90,12 +96,12 @@ async function transfert(parent, args, context, info) {
           try {
             // neword : we update the initiator's account
             await context.prisma.updateAccount({
-              data: { balance: initiatorAccount.balance - amount },
+              data: { balance: initiatorAccountBalance - amount },
               where: { id: initiatorAccount.id },
             });
             // neword : we update the receiver's account
             await context.prisma.updateAccount({
-              data: { balance: receiverPhone.balance + amount },
+              data: { balance: receiverPhoneBalance + amount },
               where: { id: receiverAccount.id },
             });
             return await context.prisma.createTransaction({
