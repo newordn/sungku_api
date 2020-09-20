@@ -11,4 +11,14 @@ type Account {
    balance: Float!
    owner : User!
    createdAt: DateTime! @createdAt
+   transactions: [Transaction!]! @relation(name:"AccountTransactions")
+}
+
+type Transaction{
+   id: ID! @id
+   amount : Float!
+   type : String!
+   createdAt: DateTime! @createdAt
+   initiator: Account! @relation(name:"AccountTransactions")
+   receiver : ID!
 }

@@ -3,6 +3,7 @@ type Query{
     info: String!
     users:[User!]!
     checkBalance(user: ID!): Float!
+    transactions(user: ID!): [Transaction!]!
 }
 
 type Mutation{
@@ -29,8 +30,16 @@ type Account{
     balance: Float!
     createdAt: String!
     owner: User!
+    transactions: [Transaction!]!
 }
-
+type Transaction{
+id: ID!
+amount : Float!
+type : String!
+createdAt: String!
+initiator: Account!
+receiver : ID!
+}
 `
 module.exports ={
     typeDefs

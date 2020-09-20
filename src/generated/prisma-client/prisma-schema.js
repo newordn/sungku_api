@@ -8,6 +8,7 @@ module.exports = {
   balance: Float!
   owner: User!
   createdAt: DateTime!
+  transactions(where: TransactionWhereInput, orderBy: TransactionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Transaction!]
 }
 
 type AccountConnection {
@@ -20,6 +21,7 @@ input AccountCreateInput {
   id: ID
   balance: Float!
   owner: UserCreateOneWithoutAccountInput!
+  transactions: TransactionCreateManyWithoutInitiatorInput
 }
 
 input AccountCreateOneWithoutOwnerInput {
@@ -27,9 +29,21 @@ input AccountCreateOneWithoutOwnerInput {
   connect: AccountWhereUniqueInput
 }
 
+input AccountCreateOneWithoutTransactionsInput {
+  create: AccountCreateWithoutTransactionsInput
+  connect: AccountWhereUniqueInput
+}
+
 input AccountCreateWithoutOwnerInput {
   id: ID
   balance: Float!
+  transactions: TransactionCreateManyWithoutInitiatorInput
+}
+
+input AccountCreateWithoutTransactionsInput {
+  id: ID
+  balance: Float!
+  owner: UserCreateOneWithoutAccountInput!
 }
 
 type AccountEdge {
@@ -73,10 +87,18 @@ input AccountSubscriptionWhereInput {
 input AccountUpdateInput {
   balance: Float
   owner: UserUpdateOneRequiredWithoutAccountInput
+  transactions: TransactionUpdateManyWithoutInitiatorInput
 }
 
 input AccountUpdateManyMutationInput {
   balance: Float
+}
+
+input AccountUpdateOneRequiredWithoutTransactionsInput {
+  create: AccountCreateWithoutTransactionsInput
+  update: AccountUpdateWithoutTransactionsDataInput
+  upsert: AccountUpsertWithoutTransactionsInput
+  connect: AccountWhereUniqueInput
 }
 
 input AccountUpdateOneWithoutOwnerInput {
@@ -90,11 +112,22 @@ input AccountUpdateOneWithoutOwnerInput {
 
 input AccountUpdateWithoutOwnerDataInput {
   balance: Float
+  transactions: TransactionUpdateManyWithoutInitiatorInput
+}
+
+input AccountUpdateWithoutTransactionsDataInput {
+  balance: Float
+  owner: UserUpdateOneRequiredWithoutAccountInput
 }
 
 input AccountUpsertWithoutOwnerInput {
   update: AccountUpdateWithoutOwnerDataInput!
   create: AccountCreateWithoutOwnerInput!
+}
+
+input AccountUpsertWithoutTransactionsInput {
+  update: AccountUpdateWithoutTransactionsDataInput!
+  create: AccountCreateWithoutTransactionsInput!
 }
 
 input AccountWhereInput {
@@ -129,6 +162,9 @@ input AccountWhereInput {
   createdAt_lte: DateTime
   createdAt_gt: DateTime
   createdAt_gte: DateTime
+  transactions_every: TransactionWhereInput
+  transactions_some: TransactionWhereInput
+  transactions_none: TransactionWhereInput
   AND: [AccountWhereInput!]
   OR: [AccountWhereInput!]
   NOT: [AccountWhereInput!]
@@ -139,6 +175,10 @@ input AccountWhereUniqueInput {
 }
 
 type AggregateAccount {
+  count: Int!
+}
+
+type AggregateTransaction {
   count: Int!
 }
 
@@ -161,6 +201,12 @@ type Mutation {
   upsertAccount(where: AccountWhereUniqueInput!, create: AccountCreateInput!, update: AccountUpdateInput!): Account!
   deleteAccount(where: AccountWhereUniqueInput!): Account
   deleteManyAccounts(where: AccountWhereInput): BatchPayload!
+  createTransaction(data: TransactionCreateInput!): Transaction!
+  updateTransaction(data: TransactionUpdateInput!, where: TransactionWhereUniqueInput!): Transaction
+  updateManyTransactions(data: TransactionUpdateManyMutationInput!, where: TransactionWhereInput): BatchPayload!
+  upsertTransaction(where: TransactionWhereUniqueInput!, create: TransactionCreateInput!, update: TransactionUpdateInput!): Transaction!
+  deleteTransaction(where: TransactionWhereUniqueInput!): Transaction
+  deleteManyTransactions(where: TransactionWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
@@ -190,6 +236,9 @@ type Query {
   account(where: AccountWhereUniqueInput!): Account
   accounts(where: AccountWhereInput, orderBy: AccountOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Account]!
   accountsConnection(where: AccountWhereInput, orderBy: AccountOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AccountConnection!
+  transaction(where: TransactionWhereUniqueInput!): Transaction
+  transactions(where: TransactionWhereInput, orderBy: TransactionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Transaction]!
+  transactionsConnection(where: TransactionWhereInput, orderBy: TransactionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TransactionConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
@@ -198,7 +247,273 @@ type Query {
 
 type Subscription {
   account(where: AccountSubscriptionWhereInput): AccountSubscriptionPayload
+  transaction(where: TransactionSubscriptionWhereInput): TransactionSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+}
+
+type Transaction {
+  id: ID!
+  amount: Float!
+  type: String!
+  createdAt: DateTime!
+  initiator: Account!
+  receiver: ID!
+}
+
+type TransactionConnection {
+  pageInfo: PageInfo!
+  edges: [TransactionEdge]!
+  aggregate: AggregateTransaction!
+}
+
+input TransactionCreateInput {
+  id: ID
+  amount: Float!
+  type: String!
+  initiator: AccountCreateOneWithoutTransactionsInput!
+  receiver: ID!
+}
+
+input TransactionCreateManyWithoutInitiatorInput {
+  create: [TransactionCreateWithoutInitiatorInput!]
+  connect: [TransactionWhereUniqueInput!]
+}
+
+input TransactionCreateWithoutInitiatorInput {
+  id: ID
+  amount: Float!
+  type: String!
+  receiver: ID!
+}
+
+type TransactionEdge {
+  node: Transaction!
+  cursor: String!
+}
+
+enum TransactionOrderByInput {
+  id_ASC
+  id_DESC
+  amount_ASC
+  amount_DESC
+  type_ASC
+  type_DESC
+  createdAt_ASC
+  createdAt_DESC
+  receiver_ASC
+  receiver_DESC
+}
+
+type TransactionPreviousValues {
+  id: ID!
+  amount: Float!
+  type: String!
+  createdAt: DateTime!
+  receiver: ID!
+}
+
+input TransactionScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  amount: Float
+  amount_not: Float
+  amount_in: [Float!]
+  amount_not_in: [Float!]
+  amount_lt: Float
+  amount_lte: Float
+  amount_gt: Float
+  amount_gte: Float
+  type: String
+  type_not: String
+  type_in: [String!]
+  type_not_in: [String!]
+  type_lt: String
+  type_lte: String
+  type_gt: String
+  type_gte: String
+  type_contains: String
+  type_not_contains: String
+  type_starts_with: String
+  type_not_starts_with: String
+  type_ends_with: String
+  type_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  receiver: ID
+  receiver_not: ID
+  receiver_in: [ID!]
+  receiver_not_in: [ID!]
+  receiver_lt: ID
+  receiver_lte: ID
+  receiver_gt: ID
+  receiver_gte: ID
+  receiver_contains: ID
+  receiver_not_contains: ID
+  receiver_starts_with: ID
+  receiver_not_starts_with: ID
+  receiver_ends_with: ID
+  receiver_not_ends_with: ID
+  AND: [TransactionScalarWhereInput!]
+  OR: [TransactionScalarWhereInput!]
+  NOT: [TransactionScalarWhereInput!]
+}
+
+type TransactionSubscriptionPayload {
+  mutation: MutationType!
+  node: Transaction
+  updatedFields: [String!]
+  previousValues: TransactionPreviousValues
+}
+
+input TransactionSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: TransactionWhereInput
+  AND: [TransactionSubscriptionWhereInput!]
+  OR: [TransactionSubscriptionWhereInput!]
+  NOT: [TransactionSubscriptionWhereInput!]
+}
+
+input TransactionUpdateInput {
+  amount: Float
+  type: String
+  initiator: AccountUpdateOneRequiredWithoutTransactionsInput
+  receiver: ID
+}
+
+input TransactionUpdateManyDataInput {
+  amount: Float
+  type: String
+  receiver: ID
+}
+
+input TransactionUpdateManyMutationInput {
+  amount: Float
+  type: String
+  receiver: ID
+}
+
+input TransactionUpdateManyWithoutInitiatorInput {
+  create: [TransactionCreateWithoutInitiatorInput!]
+  delete: [TransactionWhereUniqueInput!]
+  connect: [TransactionWhereUniqueInput!]
+  set: [TransactionWhereUniqueInput!]
+  disconnect: [TransactionWhereUniqueInput!]
+  update: [TransactionUpdateWithWhereUniqueWithoutInitiatorInput!]
+  upsert: [TransactionUpsertWithWhereUniqueWithoutInitiatorInput!]
+  deleteMany: [TransactionScalarWhereInput!]
+  updateMany: [TransactionUpdateManyWithWhereNestedInput!]
+}
+
+input TransactionUpdateManyWithWhereNestedInput {
+  where: TransactionScalarWhereInput!
+  data: TransactionUpdateManyDataInput!
+}
+
+input TransactionUpdateWithoutInitiatorDataInput {
+  amount: Float
+  type: String
+  receiver: ID
+}
+
+input TransactionUpdateWithWhereUniqueWithoutInitiatorInput {
+  where: TransactionWhereUniqueInput!
+  data: TransactionUpdateWithoutInitiatorDataInput!
+}
+
+input TransactionUpsertWithWhereUniqueWithoutInitiatorInput {
+  where: TransactionWhereUniqueInput!
+  update: TransactionUpdateWithoutInitiatorDataInput!
+  create: TransactionCreateWithoutInitiatorInput!
+}
+
+input TransactionWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  amount: Float
+  amount_not: Float
+  amount_in: [Float!]
+  amount_not_in: [Float!]
+  amount_lt: Float
+  amount_lte: Float
+  amount_gt: Float
+  amount_gte: Float
+  type: String
+  type_not: String
+  type_in: [String!]
+  type_not_in: [String!]
+  type_lt: String
+  type_lte: String
+  type_gt: String
+  type_gte: String
+  type_contains: String
+  type_not_contains: String
+  type_starts_with: String
+  type_not_starts_with: String
+  type_ends_with: String
+  type_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  initiator: AccountWhereInput
+  receiver: ID
+  receiver_not: ID
+  receiver_in: [ID!]
+  receiver_not_in: [ID!]
+  receiver_lt: ID
+  receiver_lte: ID
+  receiver_gt: ID
+  receiver_gte: ID
+  receiver_contains: ID
+  receiver_not_contains: ID
+  receiver_starts_with: ID
+  receiver_not_starts_with: ID
+  receiver_ends_with: ID
+  receiver_not_ends_with: ID
+  AND: [TransactionWhereInput!]
+  OR: [TransactionWhereInput!]
+  NOT: [TransactionWhereInput!]
+}
+
+input TransactionWhereUniqueInput {
+  id: ID
 }
 
 type User {
