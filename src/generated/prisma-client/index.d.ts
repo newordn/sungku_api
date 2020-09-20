@@ -201,7 +201,9 @@ export type AccountOrderByInput =
   | "balance_ASC"
   | "balance_DESC"
   | "createdAt_ASC"
-  | "createdAt_DESC";
+  | "createdAt_DESC"
+  | "type_ASC"
+  | "type_DESC";
 
 export type UserOrderByInput =
   | "id_ASC"
@@ -329,6 +331,7 @@ export interface AccountCreateInput {
   balance: Float;
   owner: UserCreateOneWithoutAccountInput;
   transactions?: Maybe<TransactionCreateManyWithoutInitiatorInput>;
+  type: String;
 }
 
 export interface TransactionSubscriptionWhereInput {
@@ -371,6 +374,7 @@ export interface UserCreateWithoutAccountInput {
 export interface AccountUpdateWithoutOwnerDataInput {
   balance?: Maybe<Float>;
   transactions?: Maybe<TransactionUpdateManyWithoutInitiatorInput>;
+  type?: Maybe<String>;
 }
 
 export interface TransactionCreateManyWithoutInitiatorInput {
@@ -404,6 +408,7 @@ export interface AccountUpdateInput {
   balance?: Maybe<Float>;
   owner?: Maybe<UserUpdateOneRequiredWithoutAccountInput>;
   transactions?: Maybe<TransactionUpdateManyWithoutInitiatorInput>;
+  type?: Maybe<String>;
 }
 
 export interface UserCreateInput {
@@ -437,12 +442,14 @@ export interface UserUpdateWithoutAccountDataInput {
 export interface AccountUpdateWithoutTransactionsDataInput {
   balance?: Maybe<Float>;
   owner?: Maybe<UserUpdateOneRequiredWithoutAccountInput>;
+  type?: Maybe<String>;
 }
 
 export interface AccountCreateWithoutTransactionsInput {
   id?: Maybe<ID_Input>;
   balance: Float;
   owner: UserCreateOneWithoutAccountInput;
+  type: String;
 }
 
 export interface AccountWhereInput {
@@ -480,6 +487,20 @@ export interface AccountWhereInput {
   transactions_every?: Maybe<TransactionWhereInput>;
   transactions_some?: Maybe<TransactionWhereInput>;
   transactions_none?: Maybe<TransactionWhereInput>;
+  type?: Maybe<String>;
+  type_not?: Maybe<String>;
+  type_in?: Maybe<String[] | String>;
+  type_not_in?: Maybe<String[] | String>;
+  type_lt?: Maybe<String>;
+  type_lte?: Maybe<String>;
+  type_gt?: Maybe<String>;
+  type_gte?: Maybe<String>;
+  type_contains?: Maybe<String>;
+  type_not_contains?: Maybe<String>;
+  type_starts_with?: Maybe<String>;
+  type_not_starts_with?: Maybe<String>;
+  type_ends_with?: Maybe<String>;
+  type_not_ends_with?: Maybe<String>;
   AND?: Maybe<AccountWhereInput[] | AccountWhereInput>;
   OR?: Maybe<AccountWhereInput[] | AccountWhereInput>;
   NOT?: Maybe<AccountWhereInput[] | AccountWhereInput>;
@@ -701,6 +722,7 @@ export interface AccountCreateOneWithoutTransactionsInput {
 
 export interface AccountUpdateManyMutationInput {
   balance?: Maybe<Float>;
+  type?: Maybe<String>;
 }
 
 export interface TransactionUpdateManyDataInput {
@@ -736,6 +758,7 @@ export interface AccountCreateWithoutOwnerInput {
   id?: Maybe<ID_Input>;
   balance: Float;
   transactions?: Maybe<TransactionCreateManyWithoutInitiatorInput>;
+  type: String;
 }
 
 export interface NodeNode {
@@ -790,6 +813,7 @@ export interface AccountPreviousValues {
   id: ID_Output;
   balance: Float;
   createdAt: DateTimeOutput;
+  type: String;
 }
 
 export interface AccountPreviousValuesPromise
@@ -798,6 +822,7 @@ export interface AccountPreviousValuesPromise
   id: () => Promise<ID_Output>;
   balance: () => Promise<Float>;
   createdAt: () => Promise<DateTimeOutput>;
+  type: () => Promise<String>;
 }
 
 export interface AccountPreviousValuesSubscription
@@ -806,6 +831,7 @@ export interface AccountPreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   balance: () => Promise<AsyncIterator<Float>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  type: () => Promise<AsyncIterator<String>>;
 }
 
 export interface AccountEdge {
@@ -1013,6 +1039,7 @@ export interface Account {
   id: ID_Output;
   balance: Float;
   createdAt: DateTimeOutput;
+  type: String;
 }
 
 export interface AccountPromise extends Promise<Account>, Fragmentable {
@@ -1029,6 +1056,7 @@ export interface AccountPromise extends Promise<Account>, Fragmentable {
     first?: Int;
     last?: Int;
   }) => T;
+  type: () => Promise<String>;
 }
 
 export interface AccountSubscription
@@ -1047,6 +1075,7 @@ export interface AccountSubscription
     first?: Int;
     last?: Int;
   }) => T;
+  type: () => Promise<AsyncIterator<String>>;
 }
 
 export interface AccountNullablePromise
@@ -1065,6 +1094,7 @@ export interface AccountNullablePromise
     first?: Int;
     last?: Int;
   }) => T;
+  type: () => Promise<String>;
 }
 
 export interface Transaction {

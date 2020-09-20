@@ -9,6 +9,7 @@ module.exports = {
   owner: User!
   createdAt: DateTime!
   transactions(where: TransactionWhereInput, orderBy: TransactionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Transaction!]
+  type: String!
 }
 
 type AccountConnection {
@@ -22,6 +23,7 @@ input AccountCreateInput {
   balance: Float!
   owner: UserCreateOneWithoutAccountInput!
   transactions: TransactionCreateManyWithoutInitiatorInput
+  type: String!
 }
 
 input AccountCreateOneWithoutOwnerInput {
@@ -38,12 +40,14 @@ input AccountCreateWithoutOwnerInput {
   id: ID
   balance: Float!
   transactions: TransactionCreateManyWithoutInitiatorInput
+  type: String!
 }
 
 input AccountCreateWithoutTransactionsInput {
   id: ID
   balance: Float!
   owner: UserCreateOneWithoutAccountInput!
+  type: String!
 }
 
 type AccountEdge {
@@ -58,12 +62,15 @@ enum AccountOrderByInput {
   balance_DESC
   createdAt_ASC
   createdAt_DESC
+  type_ASC
+  type_DESC
 }
 
 type AccountPreviousValues {
   id: ID!
   balance: Float!
   createdAt: DateTime!
+  type: String!
 }
 
 type AccountSubscriptionPayload {
@@ -88,10 +95,12 @@ input AccountUpdateInput {
   balance: Float
   owner: UserUpdateOneRequiredWithoutAccountInput
   transactions: TransactionUpdateManyWithoutInitiatorInput
+  type: String
 }
 
 input AccountUpdateManyMutationInput {
   balance: Float
+  type: String
 }
 
 input AccountUpdateOneRequiredWithoutTransactionsInput {
@@ -113,11 +122,13 @@ input AccountUpdateOneWithoutOwnerInput {
 input AccountUpdateWithoutOwnerDataInput {
   balance: Float
   transactions: TransactionUpdateManyWithoutInitiatorInput
+  type: String
 }
 
 input AccountUpdateWithoutTransactionsDataInput {
   balance: Float
   owner: UserUpdateOneRequiredWithoutAccountInput
+  type: String
 }
 
 input AccountUpsertWithoutOwnerInput {
@@ -165,6 +176,20 @@ input AccountWhereInput {
   transactions_every: TransactionWhereInput
   transactions_some: TransactionWhereInput
   transactions_none: TransactionWhereInput
+  type: String
+  type_not: String
+  type_in: [String!]
+  type_not_in: [String!]
+  type_lt: String
+  type_lte: String
+  type_gt: String
+  type_gte: String
+  type_contains: String
+  type_not_contains: String
+  type_starts_with: String
+  type_not_starts_with: String
+  type_ends_with: String
+  type_not_ends_with: String
   AND: [AccountWhereInput!]
   OR: [AccountWhereInput!]
   NOT: [AccountWhereInput!]

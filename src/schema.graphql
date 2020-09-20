@@ -11,7 +11,7 @@ type Mutation{
    userSetPassword(password:String!,user:ID!): User!
    userSetCode(code:String!,user:ID!):User!
    userSetName(name:String!,user:ID!): User!
-   transfert(user:ID!, phoneToTransfertTo: String!, montant: Float!, type: String!): Transaction!
+   transfert(initiator:ID!, receiverPhone: String!, amount: Float!, type: String!): Transaction!
 }
 type AuthPayload{
     token: String!
@@ -32,6 +32,7 @@ type Account{
     createdAt: String!
     owner: User!
     transactions: [Transaction!]!
+    type: String!
 }
 type Transaction{
 id: ID!

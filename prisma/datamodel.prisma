@@ -12,6 +12,7 @@ type Account {
    owner : User!
    createdAt: DateTime! @createdAt
    transactions: [Transaction!]! @relation(name:"AccountTransactions")
+   type: String!
 }
 
 type Transaction{
