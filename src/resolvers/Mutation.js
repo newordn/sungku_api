@@ -59,13 +59,11 @@ async function userSetName(parent, args, context, info) {
   return user;
 }
 async function transfert(parent, args, context, info) {
-  console.log("user set name mutation");
-  const { name } = args;
-  const user = await context.prisma.updateUser({
-    data: { name },
-    where: { id: args.user },
-  });
-  return user;
+  console.log(
+    `${args.type} ${args.montant} by user id : ${
+      args.user
+    } to the user phone number : ${args.phoneToTransfertTo}`
+  );
 }
 module.exports = {
   userSetPhone,
