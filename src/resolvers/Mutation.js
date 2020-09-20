@@ -24,8 +24,8 @@ async function userSetPhone(parent, args, context, info) {
       phone: args.phone,
       account: {
         create: {
-          balance: 0.0,
-          type: CLIENT
+          balance: 0,
+          type: CLIENT,
         },
       },
     });
@@ -66,7 +66,10 @@ async function userSetName(parent, args, context, info) {
   return user;
 }
 function checkBalanceAgainstAnAmount(account, amount) {
-  return account.balance >= amount;
+  if (account.balance >= amount) {
+    return true;
+  }
+  throw new Error("your balance is insufficient");
 }
 async function transfert(parent, args, context, info) {
   const { type, amount, initiator, receiverPhone } = args;
@@ -78,7 +81,7 @@ async function transfert(parent, args, context, info) {
     .user({ id: initiator })
     .account();
   const receiverAccount = await context.prisma
-    .user({ id: receiverPhone })
+    .user({ phone: receiverPhone })
     .account();
   switch (type) {
     case DEPOT:
