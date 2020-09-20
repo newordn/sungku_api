@@ -101,13 +101,13 @@ async function transfert(parent, args, context, info) {
             });
             // neword : we update the receiver's account
             await context.prisma.updateAccount({
-              data: { balance: receiverPhoneBalance + amount },
+              data: { balance: receiverAccountBalance + amount },
               where: { id: receiverAccount.id },
             });
             return await context.prisma.createTransaction({
               amount,
               type,
-              initiator: { connect: { id: initiator } },
+              initiator: { connect: { id: initiatorAccount.id } },
               receiver: receiverAccount.id,
             });
           } catch (e) {
