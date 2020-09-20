@@ -24,7 +24,7 @@ async function userSetPhone(parent, args, context, info) {
       phone: args.phone,
       account: {
         create: {
-          balance: 0,
+          balance: 0.0,
           type: CLIENT,
         },
       },
