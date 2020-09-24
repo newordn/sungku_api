@@ -1,12 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { getUserId, APP_SECRET } = require("../helpers/user");
-const {
-  DEPOT,
-  TRANSFERT,
-  PAIEMENT,
-  RETRAIT,
-} = require("../consts/transactionTypes");
+const { TRANSFERT, PAIEMENT, RETRAIT } = require("../consts/transactionTypes");
 const { CLIENT, MERCHANT } = require("../consts/accountTypes");
 async function userSetPhone(parent, args, context, info) {
   let user = await context.prisma.user({ phone: args.phone });
@@ -90,33 +85,29 @@ async function transfert(parent, args, context, info) {
     ? receiverAccount.balance
     : 0;
   switch (type) {
-    case DEPOT:
-      if (initiatorAccount.type === MERCHANT) {
-        if (checkBalanceAgainstAnAmount(initiatorAccount, amount)) {
-          try {
-            // neword : we update the initiator's account
-            await context.prisma.updateAccount({
-              data: { balance: initiatorAccountBalance - amount },
-              where: { id: initiatorAccount.id },
-            });
-            // neword : we update the receiver's account
-            await context.prisma.updateAccount({
-              data: { balance: receiverAccountBalance + amount },
-              where: { id: receiverAccount.id },
-            });
-            return await context.prisma.createTransaction({
-              amount,
-              type,
-              initiator: { connect: { id: initiatorAccount.id } },
-              receiver: receiverAccount.id,
-            });
-          } catch (e) {
-            throw e;
-            console.log("An error happend", e);
-          }
+    case TRANSFERT:
+      if (checkBalanceAgainstAnAmount(initiatorAccount, amount)) {
+        try {
+          // neword : we update the initiator's account
+          await context.prisma.updateAccount({
+            data: { balance: initiatorAccountBalance - amount },
+            where: { id: initiatorAccount.id },
+          });
+          // neword : we update the receiver's account
+          await context.prisma.updateAccount({
+            data: { balance: receiverAccountBalance + amount },
+            where: { id: receiverAccount.id },
+          });
+          return await context.prisma.createTransaction({
+            amount,
+            type,
+            initiator: { connect: { id: initiatorAccount.id } },
+            receiver: receiverAccount.id,
+          });
+        } catch (e) {
+          throw e;
+          console.log("An error happend", e);
         }
-      } else {
-        throw new Error("You don't have a merchant account");
       }
       break;
   }
