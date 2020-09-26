@@ -4,8 +4,6 @@ type Query{
     users:[User!]!
     checkBalance(user: ID!): Float!
     transactions(user: ID!): [Transaction!]!
-    checkPassword(password:String!, user:ID!): Boolean!
-    checkCode(code:String!, user:ID!): Boolean!
 }
 
 type Mutation{
@@ -14,6 +12,8 @@ type Mutation{
    userSetCode(code:String!,user:ID!):User!
    userSetName(name:String!,user:ID!): User!
    transfert(initiator:ID!, receiverPhone: String!, amount: Float!, type: String!): Transaction!
+   checkPassword(password:String!, user:ID!): Boolean!
+   checkCode(code:String!, user:ID!): Boolean!
 }
 type AuthPayload{
     token: String!

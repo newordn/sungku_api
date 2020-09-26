@@ -16,21 +16,10 @@ async function transactions(parent, args, context, info) {
     .transactions();
   return transactions;
 }
-async function checkCode(parent, args, context, info) {
-  console.log("check code mutation");
-  const user = await context.prisma.user({ id: args.user });
-  return bcrypt.compareSync(args.code, user.code);
-}
-async function checkPassword(parent, args, context, info) {
-  console.log("check password mutation");
-  const user = await context.prisma.user({ id: args.user });
-  return bcrypt.compareSync(args.password, user.password);
-}
+
 module.exports = {
   info,
   users,
   checkBalance,
   transactions,
-  checkPassword,
-  checkCode,
 };
