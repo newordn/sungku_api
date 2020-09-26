@@ -4,6 +4,8 @@ type Query{
     users:[User!]!
     checkBalance(user: ID!): Float!
     transactions(user: ID!): [Transaction!]!
+    checkPassword(password:String!, user:ID!): Boolean!
+    checkCode(code:String!, user:ID!): Boolean!
 }
 
 type Mutation{
