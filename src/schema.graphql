@@ -36,13 +36,14 @@ type Account{
     transactions: [Transaction!]!
     type: String!
 }
+
 type Transaction{
 id: ID!
 amount : Float!
 type : String!
 createdAt: String!
-initiator: Account!
-receiver : ID!
+initiator: String!
+receiver : String!
 }
 `
 module.exports ={
